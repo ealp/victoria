@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="description" content="[add your bin description]" />
+<meta charset=utf-8 />
+<title>Mapa Tamaulipas</title>
+<link rel="shortcut icon" href="http://www.mapitmex.com/wp-content/uploads/2013/01/50px.png" />
+  <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
+  <link rel="stylesheet" href='test.css'></script>
+  <script type="text/javascript" src="d3.v3.js"></script>
+  <script src='http://api.tiles.mapbox.com/mapbox.js/v1.6.0/mapbox.js'></script>
+  <script src='leaflet-hash.js'></script>
+  <link href='http://api.tiles.mapbox.com/mapbox.js/v1.6.0/mapbox.css' rel='stylesheet' />
+  <style>
+#map { position:absolute; top: 65px; bottom:0; width:100%; }
+  </style>
+
+</head>
+<body class="frontpage">
+
+<!-- Masthead -->
+
+<div id="masthead">
+  <a href="http://www.mapitmex.com" class="mapitmex" title="mapitmex.com">un proyecto MapItMex </a>
+</div>
+
+<!-- Header -->
+
+<div id="header">
+  <a class="title" href="http://www.mapitmex.com"><img src='http://i.imgur.com/DzDbMhc.png' height="35"></a>
+  <ul class="page-navigation">
+    <li><a class="" href="http://tamaulipas.gob.mx/">Detalles del Programa</a></li>
+    <li><a class="" href="http://tamaulipas.gob.mx/">Datos</a></li>
+  </ul>
+</div>
+
+<!-- Drawer -->
+
+<div id="drawer">
+  <div class="drawer-content">
+      <h2>Visualizar el Uso del Medio de Comunicaci&#243;n y Eventos</h2>
+      <h3>Mapping and Documenting Access Trends and Consumption Patterns</h3>
+<p>Tamaulipas’ media can play a crucial role in the future of the country. By informing citizens, by providing opportunities for discussion, and by holding those in power to account, the media has a substantial role to play in developing good governance. It can also aid economic growth and contribute to better understanding of issues in many humanitarian and development sectors.</p> 
+<p>Results are displayed across each province by use of radio, television, mobile phone and internet, and broken down by gender and location type where relevant. All 2010 population data is from the <a href='http://www.inegi.org/'>Instituto Nacional de Estatística y Geografía</a>.</p>
+  </div>
+</div>
+
+<!-- Find Bounds 
+<style>
+    #output {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        padding: 10px;
+        background: #fff;
+        z-index: 100;
+    }
+</style>
+<div id='output'>
+    click: <code id='click'></code><br/>
+    mousemove: <code id='mousemove'></code><br/>
+</div>
+-->
+
+<div id='map' class='dark'></div>
+
+<!-- Attribution Layer -->
+<div class="wax-attribution wax-mm">
+  <ul>
+    <li><a href="http://tamaulipas.gob.mx/"><img alt="" src="http://i.imgur.com/Cq7Zxbx.jpg" width=100px /></a></li>
+    <li><a href="http://tamaulipas.gob.mx/"><img alt="http://imgur.com/ftSTmAa" src="http://i.imgur.com/ftSTmAa.png?1" width=100px /></a></li>
+  </ul>
+</div>
+
+<!-- Legend -->
+
+<div id='legend-content'>
+  <div class='legend'>
+  <div class='legend-title'>Poblaci&#243;n Total</div>
+  <div class='legend-scale'>
+    <ul class='legend-labels'>
+      <!--
+      <li><img alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDoxNTAxQjg4NDdFMzExMUUyOTVEOERCMzMyNDk3OTAwRCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDoxNTAxQjg4NTdFMzExMUUyOTVEOERCMzMyNDk3OTAwRCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjQyQ0Y2MUY1N0UxMDExRTI5NUQ4REIzMzI0OTc5MDBEIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjQyQ0Y2MUY2N0UxMDExRTI5NUQ4REIzMzI0OTc5MDBEIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+TnMwUAAAAvVJREFUeNrsVctLVFEYP3fuufPw/ag0HXEcRy0asYRM7GW1iDZFm4ggQSJyU/0B7YO2RQUWlAa1adFjF2QSrWajmEW+H/kcTc30ztzn6XfsDo0zzYwSLoI++MF5fr9zv+/3fVdgjJGtNBvZYvv3CegGz4lAGdBszR8DI4Ce8iZPchJQoBK4qayqQWVF0cLLYY2PsXYLqLLOJPQhJFAR/7Jy4LIqa03MMHNHOgdpsGuCv4hs3+sm3uMVuijZlqlTeoRzD4EhQIt1FEsgAT7gkh7Wmg3NzBruGKBz3RPE1M31yaO2NSJPo0+XHCInemIR9UUTRQi44yrgChxf0MJ61si7QTrfMxnnOO6FokC2VRcR74lKXXJSmTpoOxGEVotI5QQ+fPZ1XdGb4Dht+G0/nf84RZixuQKMEHkaKzRHuhQC0VMQ3eEEz7B/PvQ9zHraAkJobuWvZGnPdpLqi3UksyCDT19yglwMTiGZ1+wuWjfVPWWOdw6I4QV5c3p3SaT4UDkrbfAQXTV67GnSbSy/iE5yPnASOWix2enB2d4Z9hVEcoovkjLspLDOQ0oOlBI45UtXgefAzJ9UFCE6hlfcgFJqgp9nzfGO/jgiR46LFDV4Wcn+EkhKUGw2wWlt+YFPiWQasRxTM96s1YJo4zLKm/sSZDx0DKpyHy43CmuK4JOoJiMmBq6ou+sIElVgPqq1a2liiSmyqhuaEcaayn6bwUzT0EKqzs/E2J5oX0l7UbB3hkwHRsUdNW6x9IhXd+X8eigUZ469H6JBFODO+jKSXZwdfS3daqJmshC5UGBtK/OrZ3vbA1T9oUDSiNPuwrXNhb5ZwhAbrvtdp/0GtYsfcOAo30M9TaIGmjDsSEbAbR+k+4A6aS1P9HRgTPw++o3wwOf5eUH5NGemQ4XzVjhvh/ruo13UW3fPAK820k0LgHOGor/WFD0kL8oq76aI/SJycBd7tYDdOusGWoB7gD9VN421NKCCV7w1b0vUPVN10///5Dj7KcAACVAKxtBh6HYAAAAASUVORK5CYII=" />   Escuelas</li>
+      <li><img alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAIAAABvFaqvAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAAD0SURBVHjaYjQzM2OgBmBioBIYNWjwGCTAw2OpKCcrKkLQIBY8ctVyfAL/PpmqvD77gOPfX4bGH9xfvn0j2aAyeUFJyZdG0d8ZGP5bMvz8d4OpYTlDyTdGkr0m+em1UdR3Bob/UHUa/1il/+rKSJNmkKyoyF9hFgbG/8iChprfNbmYSfPa49dvmH//ZvjHyMCEMOvcde7r3/+S7LXHQhLnFnMxMEAD5d9Vpt/PmC4/fopLPSOe3F8mLyj2652Jxu8zD1j/f2Kq+cz689cvcgxiYGDgZGfXkhB7/Onzq/cfyE9HDAwM33/+PPvw8WimHTWIAAAMAKbjT2ck/o4yAAAAAElFTkSuQmCC" />   Puntas de Venta de Alcohol</li>
+      <li><img alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAIAAABvFaqvAAAABmJLR0QA/wD/AP+gvaeTAAAFJElEQVQ4ja3V348b1RUH8HPPHY9nPJ7xxrvrHzPrNS1EEEGDhPhVQFWpWilqS0oJqCGCRmwAIZIoCCTeeeljxY+GAPmBlLSooKJGUSsUEZCI1KRNHppIqCtBBIpnxt5d21n/Wo89nnsOD3H6F3De70fn4Xu+VzDD9zIaAJR3lm579zYeMGiwvHf59qO304CEKZZfXN5ycAuPWBhiee/y5j9sloaUOfnVK19VX65qjoYGXnntSunx0oUHLyIAeM95EAMaWD9eL+4oUkzCEK1/tvI/zQOASInexV72jmxqNgUC+pf6mEZ9XgeAeDXmMWe3ZgEAAcC52+GYQYPOvzpzj8xBDEKKxgeNwqMFHrG0pf+e7y15NCDN0YJDQWVfhSJCE2tv1spPl2lAU4hGJNKi8UGj8FiBIxa6WD+7PrdtDk0ECZ1zncwPMzIjQcLGNxvSlmkvDQCTa5O4FdtbbSCYQpAAJbR+Zn3+1/PXV6sfrxefKNKApCXrJ+qV/RUaktCF/5bv7fFUV6GN4dFwcd8ibRCaOIXQwuY/mvO/nQcAoYv2J+3c/TlMo9BE9z9do2KknBQgjGojNNC61QKGcTCOvo2sOyxOWI3VjY0YVj5cmf/VPEcsbbny4crCsws8YmEK/23fW/JUpKQt/Tf8ygsVNVDSluGRcHH/Io9ZpEV4NJxCa39fK+8skyLQoHW65dzrMDFoMPx6mLkloxd0ASL6NlKxSlfSADDpTiI/ym7NAgET9y70plDrdKv4WBHGIHSx8tcV9/cuR4wG1l6vuUuu6ijpyPBIeNOrN9EGoY7BocB7xlN9JTJi5aOV8lPlKZR/OE8TErronu/m7spptgYS+pf6elFPl9KAMLwypBGZVRMYkn4yCkYzD81AAjSga59ey/8sP4VKT5ZgAmhi7U+10q4SbVBqUyo4HFRfqlJEaGFwMPCe9ygimZHB4cDd7dIGoYWrf1t1d7vMPIWYWKRE51zHuc/RHI2Re//taY6GWQSApJVQQtYWCwgmvUnvcm/mvhlWDAztz9qzv5iFyY0c8ZDRxPrx+sKeBdVXaGJ4LFzct8gRo4m1t2rukns9O40/N6r7q8kwwTTWT9SLO4oUkUiLKSQ00f68bW22pClBg+hKpDmasWAAw7g+nnQm9p02EEzak8HlgXOPAzEwcPdct7C9wPG0PRAAZE42TjS85zyOGU28+ser3pKnBkrbpAXvBZUDFYoIMxi+H5Z3lzlmYYjVj1ZnfzlLisCA9bPrU6h7oZu5OaNlNQAYXR1JW5o/MIEhqkVREFk3W6CAEx58Ocg/nAcFgNA81Sz8pgBjQB3rx+pTyH/Xd/e4aqBkVvpv+4t7F5NOgllsvN+oHqjSkFDH4HDg/s5Negma2DzVLO0ssWLQoXW6lXsgN4WszZbhGiBg8L+BAGEsGAAQN+O4GdtbbVasYtW/3M9vy8MEWHHzZHNu29z10DZPNt3d7hRyn3FVT8kZGR4LKwcqFJMwhX/QLz9dpoiEJRp/aZSfKnPMkIbmqebc9jmhCdBg/Yt1a4uFxo3rT82kAGD0zYgjTntpIKCIxsE49+McKKCI2mfam36yiWPGNK6dXCvuKNKY0MTwSOg963F0I5A0JDTRf8f3XvSoT2hhcCjwnveSToIZnJZBzCIl1j5ey/88zzGjjt1/d517HS2jgfx/sQmI12JWbP/IBoZ4LR5+PczdkwMFKlbd893rj4Uump80S7tKPGaREuHhsLyrrHpK2hIAxPf1HX0HxoGiMZQ71lYAAAAASUVORK5CYII=" />   Espacios P&#250;blicos Ciudadanos</li>
+      <li><img alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAIAAABvFaqvAAAABmJLR0QA/wD/AP+gvaeTAAAANklEQVQ4jWNk6HNgoAZgYWBg8LE7Q6EpWw6ZMFHDNQwMDAyjBo0aNGrQqEGjBg0dgxipVR0BAKJmBM0R7qRSAAAAAElFTkSuQmCC" />   Espacios P&#250;blicos</li><br> 
+      -->
+      <li><span style='background:#fedd84;'></span>1 - 22</li>
+      <li><span style='background:#fed66b;'></span>23 - 54</li>
+      <li><span style='background:#fdbd12;'></span>55 - 90</li>
+      <li><span style='background:#fda912;'></span>91 - 142</li>
+      <li><span style='background:#fd9612;'></span>143 - 241</li>
+      <li><span style='background:#fd8212;'></span>+242</li>
+    </ul>
+  </div>
+  <div class='legend-source'>Fuentes: <a href="http://www.inegi.org.mx/‎">INEGI</a> & <a href="http://www.mapbox.com/">MapBox</a></div>
+  </div>
+
+</body>
+
+<script rel="text/javascript" src="test.js"></script>
+
+</html>
